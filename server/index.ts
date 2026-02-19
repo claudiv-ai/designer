@@ -22,7 +22,11 @@ export async function startDesignerServer(projectRoot: string) {
   setupWatcher(server, projectRoot);
 
   // Serve built frontend in production
-  const clientDir = join(import.meta.dirname, '../dist/client');
+  // When running from dist/server/index.js, client is at ../client
+  // When running from server/index.ts (dev), client is at ../dist/client
+  const clientDir = existsSync(join(import.meta.dirname, '../client/index.html'))
+    ? join(import.meta.dirname, '../client')
+    : join(import.meta.dirname, '../dist/client');
   if (existsSync(clientDir)) {
     app.use(express.static(clientDir));
     app.get('*', (_, res) => {
