@@ -117,24 +117,59 @@ function serializeForPreview(component: ComponentDefinition): string {
 }
 
 /**
- * Very basic CDML syntax highlighting using spans.
- * Returns JSX elements with color classes.
+ * Very basic CDML syntax highlighting using React elements.
  */
 function highlightCdml(cdml: string): React.ReactNode[] {
   return cdml.split('\n').map((line, i) => {
-    const highlighted = line
-      .replace(/(&lt;|<)(\/?)([a-zA-Z][\w:-]*)/g, '<span class="text-blue-400">&lt;$2$3</span>')
-      .replace(/(\w+)="([^"]*)"/g, '<span class="text-purple-400">$1</span>=<span class="text-green-400">"$2"</span>')
-      .replace(/(\/?>)/g, '<span class="text-blue-400">$1</span>');
+    const parts: React.ReactNode[] = [];
+    let remaining = line;
+    let key = 0;
+
+    while (remaining.length > 0) {
+      // Match opening/closing tags: <tagname or </tagname
+      const tagMatch = remaining.match(/^(<\/?[a-zA-Z][\w:-]*)/);
+      if (tagMatch) {
+        parts.push(<span key={key++} className="text-blue-400">{tagMatch[1]}</span>);
+        remaining = remaining.slice(tagMatch[1].length);
+        continue;
+      }
+
+      // Match attributes: name="value"
+      const attrMatch = remaining.match(/^(\w+)(="[^"]*")/);
+      if (attrMatch) {
+        parts.push(<span key={key++} className="text-purple-400">{attrMatch[1]}</span>);
+        parts.push(<span key={key++} className="text-green-400">{attrMatch[2]}</span>);
+        remaining = remaining.slice(attrMatch[0].length);
+        continue;
+      }
+
+      // Match closing brackets: > or />
+      const bracketMatch = remaining.match(/^(\/?>)/);
+      if (bracketMatch) {
+        parts.push(<span key={key++} className="text-blue-400">{bracketMatch[1]}</span>);
+        remaining = remaining.slice(bracketMatch[1].length);
+        continue;
+      }
+
+      // Match XML comments: <!-- ... -->
+      const commentMatch = remaining.match(/^(<!--.*?-->)/);
+      if (commentMatch) {
+        parts.push(<span key={key++} className="text-gray-500">{commentMatch[1]}</span>);
+        remaining = remaining.slice(commentMatch[1].length);
+        continue;
+      }
+
+      // Plain text: consume one character
+      parts.push(remaining[0]);
+      remaining = remaining.slice(1);
+    }
 
     return (
       <span key={i}>
-        <span
-          className="text-gray-600 select-none inline-block w-8 text-right mr-3"
-        >
+        <span className="text-gray-600 select-none inline-block w-8 text-right mr-3">
           {i + 1}
         </span>
-        <span dangerouslySetInnerHTML={{ __html: highlighted }} />
+        {parts}
         {'\n'}
       </span>
     );
