@@ -15,6 +15,19 @@
     "chokidar": "^4.0.0",
     "cors": "^2.8.5"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/claudiv-ai/designer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/claudiv-ai/designer/issues"
+  },
+  "homepage": "https://claudiv.org",
+  "author": "Amir Guterman",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/ws": "^8.5.0",
