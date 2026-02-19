@@ -29,7 +29,7 @@ export async function startDesignerServer(projectRoot: string) {
     : join(import.meta.dirname, '../dist/client');
   if (existsSync(clientDir)) {
     app.use(express.static(clientDir));
-    app.get('*', (_, res) => {
+    app.get('/{*path}', (_, res) => {
       res.sendFile(join(clientDir, 'index.html'));
     });
   }
