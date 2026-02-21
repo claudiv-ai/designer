@@ -1,6 +1,6 @@
 {
   "name": "@claudiv/designer",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"tsx watch server/index.ts\" \"vite\"",
@@ -10,7 +10,7 @@
     "claudiv:init": "claudiv-vite-init"
   },
   "dependencies": {
-    "@claudiv/core": "^0.3.4",
+    "@claudiv/core": "^0.3.5",
     "express": "^5.0.0",
     "ws": "^8.18.0",
     "chokidar": "^4.0.0",
